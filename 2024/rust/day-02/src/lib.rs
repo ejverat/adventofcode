@@ -59,6 +59,38 @@ pub fn process_part1(input: &str) -> i32 {
     result
 }
 
+pub fn process_part2(input: &str) -> i32 {
+    let result: i32 = input
+        .lines()
+        .map(|report| {
+            let v_levels: Vec<i32> = report
+                .split_whitespace()
+                .map(|level| level.parse::<i32>().unwrap())
+                .collect::<Vec<i32>>();
+
+            let level_with_problem = get_level_with_problem(&v_levels);
+
+            if level_with_problem.is_none() {
+                return true;
+            }
+
+            for i in 0..v_levels.len() {
+                let mut temp_levels = v_levels.clone();
+                temp_levels.remove(i);
+                let level_with_problem = get_level_with_problem(&temp_levels);
+                if level_with_problem.is_none() {
+                    return true;
+                }
+            }
+
+            return false;
+        })
+        .filter(|safety| *safety == true)
+        .count() as i32;
+
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -76,4 +108,9 @@ mod tests {
         assert_eq!(result, 2);
     }
 
+    #[test]
+    fn part2_test() {
+        let result = process_part2(&INPUT);
+        assert_eq!(result, 4);
+    }
 }
