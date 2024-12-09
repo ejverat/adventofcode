@@ -1,7 +1,7 @@
 fn count_word_occurrences_no_spaces(text: &str, target_word: &str) -> u32 {
     let mut count = 0;
     let target_len = target_word.len();
-    
+
     let mut i = 0;
     while i < text.len() {
         if text[i..].starts_with(target_word) {
@@ -29,12 +29,14 @@ pub fn process_part1(input: &str) -> u32 {
         let rev_words = count_word_occurrences_no_spaces(line, RWORD);
         total_words += words + rev_words;
 
-        println!("Line: {} | Horiz: {} | HorizRev: {}", line, words, rev_words);
+        println!(
+            "Line: {} | Horiz: {} | HorizRev: {}",
+            line, words, rev_words
+        );
     }
 
     let num_rows: i32 = lines.len() as i32;
     let num_cols: i32 = lines[0].len() as i32;
-
 
     // Vertical lines
     for j in 0..num_cols {
@@ -49,8 +51,10 @@ pub fn process_part1(input: &str) -> u32 {
         let rev_words = count_word_occurrences_no_spaces(&vertical_str, RWORD);
         total_words += words + rev_words;
 
-        println!("Line: {} | Vert: {} | VertRev: {}", &vertical_str, words, rev_words);
-
+        println!(
+            "Line: {} | Vert: {} | VertRev: {}",
+            &vertical_str, words, rev_words
+        );
     }
 
     // Collect diagonals into a vector of &str
@@ -68,8 +72,10 @@ pub fn process_part1(input: &str) -> u32 {
         let rev_words = count_word_occurrences_no_spaces(&diagonal_str, RWORD);
         total_words += words + rev_words;
 
-        println!("Line: {} | Diag: {} | DiagRev: {}", &diagonal_str, words, rev_words);
-
+        println!(
+            "Line: {} | Diag: {} | DiagRev: {}",
+            &diagonal_str, words, rev_words
+        );
     }
 
     for k in 0..(num_rows as i32) + (num_cols as i32) - 1 {
@@ -91,7 +97,10 @@ pub fn process_part1(input: &str) -> u32 {
         let rev_words = count_word_occurrences_no_spaces(&diagonal_str, RWORD);
         total_words += words + rev_words;
 
-        println!("Line: {} | Diag: {} | DiagRev: {}", &diagonal_str, words, rev_words);
+        println!(
+            "Line: {} | Diag: {} | DiagRev: {}",
+            &diagonal_str, words, rev_words
+        );
     }
 
     // Print the diagonals stored in the vector
@@ -112,6 +121,44 @@ pub fn process_part1(input: &str) -> u32 {
     // }
 
     // Collect diagonals into a vector of &str starting from the bottom right
+
+    total_words
+}
+
+pub fn process_part2(input: &str) -> u32 {
+    const WORD: &str = "MAS";
+    const RWORD: &str = "SAM";
+
+    let mut total_words = 0;
+
+    let lines: Vec<&str> = input.lines().collect();
+
+    let num_rows = lines.len();
+    let num_cols = lines[0].len();
+
+    // Vertical lines
+    for j in 1..num_cols - 1 {
+        let mut i = 1;
+
+        while i < num_rows - 1 {
+            if lines[i as usize].chars().nth(j as usize).unwrap() == 'A' {
+                let mut horizontal1_str = String::new();
+                let mut horizontal2_str = String::new();
+                horizontal1_str.push(lines[i - 1].chars().nth(j - 1).unwrap());
+                horizontal1_str.push(lines[i as usize].chars().nth(j as usize).unwrap());
+                horizontal1_str.push(lines[i + 1 as usize].chars().nth(j + 1 as usize).unwrap());
+
+                horizontal2_str.push(lines[i - 1].chars().nth(j + 1).unwrap());
+                horizontal2_str.push(lines[i as usize].chars().nth(j as usize).unwrap());
+                horizontal2_str.push(lines[i + 1 as usize].chars().nth(j - 1 as usize).unwrap());
+
+                if (horizontal1_str == WORD || horizontal1_str == RWORD) && (horizontal2_str == WORD || horizontal2_str == RWORD) {
+                    total_words += 1;
+                }
+            }
+            i += 1;
+        }
+    }
 
     total_words
 }
@@ -143,5 +190,11 @@ MXMXAXMASX";
     fn part1_test() {
         let result = process_part1(INPUT);
         assert_eq!(result, 18);
+    }
+
+    #[test]
+    fn part2_test() {
+        let result = process_part2(INPUT);
+        assert_eq!(result, 9);
     }
 }
